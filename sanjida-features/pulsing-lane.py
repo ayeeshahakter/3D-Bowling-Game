@@ -1,0 +1,40 @@
+﻿# Pulsing Lane Feature
+# Student: Sanjida Islam (22299420)
+# Feature: Dynamic lane color changing over time
+
+import math
+from OpenGL.GL import *
+def draw_pulsing_lane(frame_count, LANE_WIDTH, LANE_Y0, LANE_Y1, GUTTER_W):
+    time_s = frame_count / 60.0  
+    glPushMatrix()
+    glBegin(GL_QUADS)
+    glColor3f(0.15,0.15,0.18)
+    glVertex3f(-LANE_WIDTH/2 - GUTTER_W, LANE_Y0, 0); glVertex3f(-LANE_WIDTH/2, LANE_Y0, 0)
+    glVertex3f(-LANE_WIDTH/2, LANE_Y1, 0); glVertex3f(-LANE_WIDTH/2 - GUTTER_W, LANE_Y1, 0)
+    glVertex3f(LANE_WIDTH/2, LANE_Y0, 0); glVertex3f(LANE_WIDTH/2 + GUTTER_W, LANE_Y0, 0)
+    glVertex3f(LANE_WIDTH/2 + GUTTER_W, LANE_Y1, 0); glVertex3f(LANE_WIDTH/2, LANE_Y1, 0)
+    glEnd()
+    pulseslow = 0.5*(1+math.sin(time_s*2.2))
+    c1 = 0.55+0.15*pulseslow
+    c2 = 0.45-0.15*pulseslow
+    tiles_x = 12
+    tiles_y = 30
+    tile_w = LANE_WIDTH/tiles_x
+    tile_h = (LANE_Y1-LANE_Y0)/tiles_y
+    for iy in range(tiles_y):
+        for ix in range(tiles_x):
+            u0 = -LANE_WIDTH/2 + ix*tile_w
+            u1 = u0 + tile_w
+            v0 = LANE_Y0 + iy*tile_h
+            v1 = v0 + tile_h
+            if (ix+iy)%2==0:
+                glColor3f(c1,0.38,0.22)
+            else:
+                glColor3f(c2,0.31,0.18)
+            glBegin(GL_QUADS)
+            glVertex3f(u0,v0,0)
+            glVertex3f(u1,v0,0)
+            glVertex3f(u1,v1,0)
+            glVertex3f(u0,v1,0)
+            glEnd()   
+    glPopMatrix()

@@ -1,0 +1,37 @@
+﻿# Ball-Pin Collision Detection
+# Student: Sanjida Islam (22299420)
+# Feature: Collision detection between ball and pins
+
+import math
+def check_ball_pin_collision(ball_pos, ball_vel, pins, BALL_RADIUS, PIN_RADIUS):
+    bx, by, bz = ball_pos  
+    for i, pin in enumerate(pins):
+        if not pin["up"]:
+            continue
+            
+        px, py = pin["x"], pin["y"]
+        dx = bx - px
+        dy = by - py
+        dist = math.sqrt(dx*dx + dy*dy)
+        
+        if dist < BALL_RADIUS + PIN_RADIUS and bz < 25:
+            pin["up"] = False
+            pin["vx"] = dx/dist * 0.8 + random.uniform(-0.2, 0.2)
+            pin["vy"] = dy/dist * 0.8 + random.uniform(-0.2, 0.2)
+            pin["fallen_timer"] = 0
+            impulse = 0.3
+            ball_vel[0] += dx/dist * impulse
+            ball_vel[1] += dy/dist * impulse  
+            return True    
+    return False
+    
+def update_fallen_pins(pins):
+    for pin in pins:
+        if not pin["up"]:
+            pin["fallen_timer"] += 1
+            pin["x"] += pin["vx"]
+            pin["y"] += pin["vy"]
+            pin["vx"] *= 0.95 
+            pin["vy"] *= 0.95
+
+

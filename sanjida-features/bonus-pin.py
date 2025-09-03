@@ -1,0 +1,44 @@
+﻿# Bonus Pin Feature
+# Student: Sanjida Islam (22299420)
+# Feature: Special color to make sure awarding extra points
+
+import random
+def initialize_bonus_pin():
+    return {
+        "active": False,
+        "index": -1,
+        "next_check_ms": 0
+    }
+def check_bonus_pin_activation(pins, current_time_ms, bonus_pin_state):
+    if not bonus_pin_state["active"] and current_time_ms > bonus_pin_state["next_check_ms"]:
+        standing_pins = []
+        for i, pin in enumerate(pins):
+            if pin["up"]:
+                standing_pins.append(i)
+        if len(standing_pins) >= 3 and random.random() < 0.2:
+            bonus_pin_state["index"] = random.choice(standing_pins)
+            bonus_pin_state["active"] = True
+        bonus_pin_state["next_check_ms"] = current_time_ms + random.randint(3000, 7000)
+def draw_bonus_pin(pins, bonus_pin_state, PIN_HEIGHT, PIN_RADIUS):
+    if bonus_pin_state["active"] and 0 <= bonus_pin_state["index"] < len(pins):
+        pin = pins[bonus_pin_state["index"]]
+        if pin["up"]:
+            glPushMatrix()
+            glTranslatef(pin["x"], pin["y"], 0)  
+            glColor3f(1.0, 0.8, 0.0)  
+            quad = gluNewQuadric()
+            gluCylinder(quad, PIN_RADIUS, PIN_RADIUS*0.8, PIN_HEIGHT, 8, 8)
+            glColor3f(1.0, 1.0, 0.5)
+            glutSolidSphere(PIN_RADIUS*0.3, 6, 6)            
+            glPopMatrix()
+def handle_bonus_pin_hit(pins, bonus_pin_state, score):
+    if bonus_pin_state["active"]:
+        pin = pins[bonus_pin_state["index"]]
+        if not pin["up"]: 
+            score += 20  
+            bonus_pin_state["active"] = False
+            bonus_pin_state["index"] = -1
+            return 20 
+    return 0
+
+

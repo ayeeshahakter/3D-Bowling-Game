@@ -1,0 +1,58 @@
+﻿# Shadow Effects for Ball, Pins, and Obstacles
+# Student: Sanjida Islam (22299420)
+# Feature: Adds shadows for 3D depth
+
+from OpenGL.GL import *
+def draw_ball_shadow(ball_pos, BALL_RADIUS):
+    bx, by, bz = ball_pos   
+    glPushMatrix()
+    glTranslatef(bx, by, 0.1) 
+    glColor4f(0.0, 0.0, 0.0, 0.3)  
+    glBegin(GL_TRIANGLE_FAN)
+    glVertex3f(0, 0, 0)
+    for i in range(17):
+        angle = i * 2.0 * 3.14159 / 16
+        x = BALL_RADIUS * 0.8 * math.cos(angle)  
+        y = BALL_RADIUS * 0.8 * math.sin(angle)
+        glVertex3f(x, y, 0)
+    glEnd()    
+    glPopMatrix()
+def draw_pin_shadows(pins, PIN_RADIUS):
+    glColor4f(0.0, 0.0, 0.0, 0.25)      
+    for pin in pins:
+        if pin["up"]:
+            glPushMatrix()
+            glTranslatef(pin["x"], pin["y"], 0.1)
+            glBegin(GL_TRIANGLE_FAN)
+            glVertex3f(0, 0, 0)
+            for i in range(13):
+                angle = i * 2.0 * 3.14159 / 12
+                x = PIN_RADIUS * 1.2 * math.cos(angle)
+                y = PIN_RADIUS * 0.8 * math.sin(angle)  
+                glVertex3f(x, y, 0)
+            glEnd()      
+            glPopMatrix()
+def draw_obstacle_shadows(obstacles, OBSTACLE_RADIUS):
+    glColor4f(0.0, 0.0, 0.0, 0.2)    
+    for obstacle in obstacles:
+        if obstacle["active"]:
+            glPushMatrix()
+            glTranslatef(obstacle["x"], obstacle["y"], 0.1)
+            glBegin(GL_TRIANGLE_FAN)
+            glVertex3f(0, 0, 0)
+            for i in range(9):
+                angle = i * 2.0 * 3.14159 / 8
+                x = OBSTACLE_RADIUS * math.cos(angle)
+                y = OBSTACLE_RADIUS * math.sin(angle)
+                glVertex3f(x, y, 0)
+            glEnd()
+            glPopMatrix()
+def setup_shadow_rendering():
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    glDepthMask(GL_FALSE)  
+def cleanup_shadow_rendering():
+    glDisable(GL_BLEND)
+    glDepthMask(GL_TRUE)
+
+

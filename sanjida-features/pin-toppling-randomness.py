@@ -1,0 +1,36 @@
+﻿# Pin Falling with Arcade Randomness
+# Student: Sanjida Islam (22299420)
+# Feature: Pins fall with randomly for arcade style gameplay
+import random
+def topple_pins_with_randomness(pins, ball_pos, ball_vel):
+    for i, pin in enumerate(pins):
+        if not pin["up"]:
+            continue
+        bx, by, bz = ball_pos
+        px, py = pin["x"], pin["y"]
+        dx = bx - px
+        dy = by - py
+        dist = math.sqrt(dx*dx + dy*dy)        
+        if dist < 30: 
+            if random.random() < 0.7: 
+                pin["up"] = False          
+                angle = random.uniform(0, 2*math.pi)
+                speed = random.uniform(0.5, 1.2)
+                pin["vx"] = math.cos(angle) * speed
+                pin["vy"] = math.sin(angle) * speed
+                pin["fallen_timer"] = 0
+                for j, other_pin in enumerate(pins):
+                    if i != j and other_pin["up"]:
+                        ox, oy = other_pin["x"], other_pin["y"]
+                        other_dist = math.sqrt((px-ox)**2 + (py-oy)**2)
+                        if other_dist < 25 and random.random() < 0.3:
+                            other_pin["up"] = False
+                            other_pin["vx"] = random.uniform(-0.5, 0.5)
+                            other_pin["vy"] = random.uniform(-0.5, 0.5)
+                            other_pin["fallen_timer"] = 0
+def apply_pin_wobble(pins, frame_count):
+    for pin in pins:
+        if pin["up"]:
+            wobble = math.sin(frame_count * 0.1 + pin["x"] * 0.1) * 0.5
+            pin["wobble_offset"] = wobble
+            
